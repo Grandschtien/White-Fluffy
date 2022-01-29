@@ -34,6 +34,10 @@ extension UICollectionView {
         }
         return cell
     }
+    
+    func register<T: UICollectionViewCell>(_ cellType: T.Type) {
+        self.register(cellType, forCellWithReuseIdentifier: cellType.reuseIdentifier)
+    }
 }
 
 extension UITableView {

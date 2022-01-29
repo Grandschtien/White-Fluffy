@@ -10,11 +10,12 @@ import UIKit
 
 final class PhotosViewController: UIViewController {
     private let output: PhotosViewOutput
-    private let table: UITableView = {
-        var table = UITableView()
-        table.translatesAutoresizingMaskIntoConstraints = false
-        table.backgroundColor = .white
-        return table
+    private let collection: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        var collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collection.translatesAutoresizingMaskIntoConstraints = false
+        collection.backgroundColor = .white
+        return collection
     }()
     
     init(output: PhotosViewOutput) {
@@ -41,22 +42,36 @@ extension PhotosViewController {
     private func setup() {
         navigationController?.isNavigationBarHidden = false
         title = photosNavTitle
-        table.dataSource = self
-        view.addSubview(table)
-        table.pins()
+        collection.dataSource = self
+        collection.delegate = self
+        collection.register(PhotoCell.self)
+        collection.contentInset = UIEdgeInsets(top: 0, left: 10, bottom: 10, right: 10)
+        view.addSubview(collection)
+        collection.pins()
     }
 }
 //MARK: - UITableViewDataSource
-extension PhotosViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-       return 100
+extension PhotosViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        100
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collection.dequeueCell(cellType: PhotoCell.self, for: indexPath)
+        let data = Data()
+        cell.configure(with: data)
+        return cell
     }
 }
 //MARK: - UITableViewDelegate
-extension PhotosViewController: UITableViewDelegate {
-    
+extension PhotosViewController: UICollectionViewDelegate {
+
+}
+//MARK: - UICollectionViewDelegateFlowLayout
+extension PhotosViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: view.frame.width / 2 - 20, height: view.frame.width / 2 - 20)
+    }
 }

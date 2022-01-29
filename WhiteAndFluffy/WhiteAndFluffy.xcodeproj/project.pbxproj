@@ -34,6 +34,8 @@
 		6006FD1727A5BF6800F14C97 /* ReuseIdentifire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6006FD1627A5BF6800F14C97 /* ReuseIdentifire.swift */; };
 		6006FD1927A5C9F500F14C97 /* UIView+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6006FD1827A5C9F500F14C97 /* UIView+Layout.swift */; };
 		6006FD1B27A5CD4800F14C97 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6006FD1A27A5CD4800F14C97 /* Constants.swift */; };
+		6006FD1E27A5CFEC00F14C97 /* PhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6006FD1D27A5CFEC00F14C97 /* PhotoCell.swift */; };
+		606140E727A5D7290011E4D9 /* FavoritePhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606140E627A5D7290011E4D9 /* FavoritePhotoCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -66,6 +68,8 @@
 		6006FD1627A5BF6800F14C97 /* ReuseIdentifire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReuseIdentifire.swift; sourceTree = "<group>"; };
 		6006FD1827A5C9F500F14C97 /* UIView+Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Layout.swift"; sourceTree = "<group>"; };
 		6006FD1A27A5CD4800F14C97 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		6006FD1D27A5CFEC00F14C97 /* PhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCell.swift; sourceTree = "<group>"; };
+		606140E627A5D7290011E4D9 /* FavoritePhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritePhotoCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +136,7 @@
 				6006FCFE27A5BEDB00F14C97 /* PhotosProtocols.swift */,
 				6006FCFF27A5BEDB00F14C97 /* PhotosInteractor.swift */,
 				6006FD0027A5BEDB00F14C97 /* PhotosContainer.swift */,
+				6006FD1D27A5CFEC00F14C97 /* PhotoCell.swift */,
 			);
 			path = Photos;
 			sourceTree = "<group>";
@@ -145,6 +150,7 @@
 				6006FCF227A5BECE00F14C97 /* FavoritesProtocols.swift */,
 				6006FCF327A5BECE00F14C97 /* FavoritesInteractor.swift */,
 				6006FCF427A5BECE00F14C97 /* FavoritesContainer.swift */,
+				606140E627A5D7290011E4D9 /* FavoritePhotoCell.swift */,
 			);
 			path = Favorites;
 			sourceTree = "<group>";
@@ -234,6 +240,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6006FCF627A5BECE00F14C97 /* FavoritesRouter.swift in Sources */,
+				6006FD1E27A5CFEC00F14C97 /* PhotoCell.swift in Sources */,
 				6006FD0327A5BEDB00F14C97 /* PhotosViewController.swift in Sources */,
 				6006FCFA27A5BECE00F14C97 /* FavoritesContainer.swift in Sources */,
 				6006FCD927A5BDFD00F14C97 /* AppDelegate.swift in Sources */,
@@ -248,6 +255,7 @@
 				6006FD1927A5C9F500F14C97 /* UIView+Layout.swift in Sources */,
 				6006FD1127A5BF0200F14C97 /* PhotoInfoProtocols.swift in Sources */,
 				6006FCF527A5BECE00F14C97 /* FavoritesPresenter.swift in Sources */,
+				606140E727A5D7290011E4D9 /* FavoritePhotoCell.swift in Sources */,
 				6006FD0E27A5BF0200F14C97 /* PhotoInfoPresenter.swift in Sources */,
 				6006FD0627A5BEDB00F14C97 /* PhotosContainer.swift in Sources */,
 				6006FD0527A5BEDB00F14C97 /* PhotosInteractor.swift in Sources */,
