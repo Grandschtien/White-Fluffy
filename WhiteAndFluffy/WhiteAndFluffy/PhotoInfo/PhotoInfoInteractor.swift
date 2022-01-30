@@ -10,7 +10,23 @@ import Foundation
 
 final class PhotoInfoInteractor {
 	weak var output: PhotoInfoInteractorOutput?
+    private let networkService: NetworkProtocol = NetworkService()
 }
 
 extension PhotoInfoInteractor: PhotoInfoInteractorInput {
+    func loadStatisticsOfPhoto(for key: String) {
+        networkService.getPhotoStatisticsForKey(key: key) {[weak self] result in
+                
+            switch result {
+            case .success(let data):
+                guard let statistics = try? JSONDecoder().decode(Statistics.self, from: data) else {
+                    self?.output?.didCatchError(errorDescription: RequestErrors.somethingWrong.localizedDescription)
+                    return
+                }
+                self?.output?.recivePhotoStatistics(photo: statistics)
+            case .failure(let error):
+                self?.output?.didCatchError(errorDescription: error.localizedDescription)
+            }
+        }
+    }
 }

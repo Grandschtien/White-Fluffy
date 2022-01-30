@@ -11,7 +11,9 @@ class PhotoCell: UICollectionViewCell {
     private let image: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
-        image.backgroundColor = .red
+        image.backgroundColor = .lightGray
+        image.layer.masksToBounds = true
+        image.contentMode = .scaleAspectFill
         image.layer.cornerRadius = 10
         return image
     }()
@@ -21,7 +23,9 @@ class PhotoCell: UICollectionViewCell {
         view.backgroundColor = .white
         return view
     }()
-    func configure(with imageData: Data) {
+    func configure(with viewModel: PhotoViewModel) {
+        image.kf.setImage(with: viewModel.resourceOfImage,
+                          placeholder: UIImage(named: "photo"))
         setup()
     }
     
@@ -29,7 +33,10 @@ class PhotoCell: UICollectionViewCell {
         addSubview(containerView)
         containerView.pins()
         containerView.addSubview(image)
-        let imageInsets = UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0)
+        let imageInsets = UIEdgeInsets(top: 10,
+                                       left: 0,
+                                       bottom: 0,
+                                       right: 0)
         image.pins(imageInsets)
     }
 }

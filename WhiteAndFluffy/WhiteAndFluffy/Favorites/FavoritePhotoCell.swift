@@ -47,11 +47,12 @@ class FavoritePhotoCell: UITableViewCell {
         containerView.pins()
         containerView.addSubview(image)
         image.leading(10)
-        image.top(10)
-        image.bottom(-10)
+        image.top(10, isIncludeSafeArea: false)
+        image.bottom(-10, isIncludeSafeArea: false)
         image.widthAnchor.constraint(equalToConstant: frame.height).isActive = true
         containerView.addSubview(name)
-        name.leadingAnchor.constraint(equalTo: image.trailingAnchor, constant: 10).isActive = true
+        name.leadingAnchor.constraint(equalTo: image.trailingAnchor,
+                                      constant: 10).isActive = true
         name.centerY()
         name.trailing(-10)
     }

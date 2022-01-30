@@ -27,9 +27,11 @@ extension UITableViewHeaderFooterView: ReuseIdentifiable {}
 extension UICollectionReusableView: ReuseIdentifiable {}
 
 extension UICollectionView {
-    func dequeueCell<T: UICollectionViewCell>(cellType: T.Type, for indexPath: IndexPath) -> T {
+    func dequeueCell<T: UICollectionViewCell>(cellType: T.Type,
+                                              for indexPath: IndexPath) -> T {
         guard let cell = self.dequeueReusableCell(withReuseIdentifier: T.reuseIdentifier,
-                for: indexPath) as? T else {
+                                                  for: indexPath) as? T
+        else {
             fatalError("Can't deque")
         }
         return cell
@@ -41,9 +43,11 @@ extension UICollectionView {
 }
 
 extension UITableView {
-    func dequeueCell<T: UITableViewCell>(cellType: T.Type, for indexPath: IndexPath) -> T {
+    func dequeueCell<T: UITableViewCell>(cellType: T.Type,
+                                         for indexPath: IndexPath) -> T {
         guard let cell = self.dequeueReusableCell(withIdentifier: T.reuseIdentifier,
-                for: indexPath) as? T else {
+                                                  for: indexPath) as? T
+        else {
             fatalError("Can't deque")
         }
         return cell

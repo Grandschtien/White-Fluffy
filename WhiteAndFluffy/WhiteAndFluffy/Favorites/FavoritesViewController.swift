@@ -27,9 +27,12 @@ final class FavoritesViewController: UIViewController {
     
 	override func viewDidLoad() {
 		super.viewDidLoad()
+        output.viewDidLoad()
         setup()
 	}
-    
+    override func viewWillAppear(_ animated: Bool) {
+        tabBarController?.tabBar.isHidden = false
+    }
 }
 //MARK: - Настройка таблицы
 extension FavoritesViewController {
@@ -48,11 +51,13 @@ extension FavoritesViewController: FavoritesViewInput {
 }
 //MARK: - UITableViewDataSource
 extension FavoritesViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView,
+                   numberOfRowsInSection section: Int) -> Int {
         return 100
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView,
+                   cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = table.dequeueCell(cellType: FavoritePhotoCell.self, for: indexPath)
         cell.configure()
         return cell
@@ -63,7 +68,8 @@ extension FavoritesViewController: UITableViewDataSource {
 
 //MARK: - UITableViewDelegate
 extension FavoritesViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView,
+                   heightForRowAt indexPath: IndexPath) -> CGFloat {
         return view.frame.height / 6
     }
 }

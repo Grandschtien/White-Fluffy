@@ -9,3 +9,4 @@ import Foundation
 
 let photosNavTitle = "Фотографии"
 let favoritesNavTitle = "Избранное"
+let apiKey = "2K4oAWg2Zan_dmCx36clHf8SizUP6tUMgEZNtBMYcs0"

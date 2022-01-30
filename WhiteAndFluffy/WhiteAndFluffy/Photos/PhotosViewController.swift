@@ -10,13 +10,58 @@ import UIKit
 
 final class PhotosViewController: UIViewController {
     private let output: PhotosViewOutput
+    private var viewModels = [PhotoViewModel]()
+    private var searchResultsViewModels: [PhotoViewModel] = []
+    private var isSearchStarted: Bool {
+        return searchBar.text?.isEmpty ?? true
+    }
+    
+    private var searchBar = UISearchBar()
+    private var activityIndicator:UIActivityIndicatorView = {
+        let activity = UIActivityIndicatorView()
+        activity.translatesAutoresizingMaskIntoConstraints = false
+        activity.style = UIActivityIndicatorView.Style.large
+        return activity
+    }()
+    
+    //Для обработки потери сети
+    private let errorLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 20, weight: .regular)
+        label.textAlignment = .center
+        label.textColor = .black
+        label.numberOfLines = 2
+        return label
+    }()
+    private let errorButton: UIButton = {
+        let button = UIButton(type: .roundedRect)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Обновить", for: .normal)
+        button.setTitleColor(UIColor(named: "buttonColor"), for: .normal)
+        button.layer.cornerRadius = 10
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor(named: "buttonColor")?.cgColor
+        return button
+    }()
+    private let errorStackView:UIStackView = {
+        let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.axis = .vertical
+        stack.spacing = 30
+        stack.distribution = .fill
+        stack.alignment = .center
+        return stack
+    }()
     private let collection: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        var collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        var collection = UICollectionView(frame: .zero,
+                                          collectionViewLayout: layout)
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.backgroundColor = .white
         return collection
     }()
+    
     
     init(output: PhotosViewOutput) {
         self.output = output
@@ -30,42 +75,133 @@ final class PhotosViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        output.viewDidLoad()
         setup()
+        setupWaitingIndicator()
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        tabBarController?.tabBar.isHidden = false
     }
     
 }
 //MARK: - PhotosViewInput
 extension PhotosViewController: PhotosViewInput {
+    //MARK: - updateSearchResults
+    func updateSearchResults(viewModels: [PhotoViewModel]) {
+        DispatchQueue.main.async {
+            self.searchResultsViewModels = viewModels
+            if self.searchResultsViewModels.isEmpty {
+                print(self.searchResultsViewModels.count)
+                return
+            }
+            self.collection.isHidden = false
+            self.activityIndicator.isHidden = true
+            self.collection.reloadData()
+        }
+    }
+    // MARK: - updateViewWithPhoto
+    func updateViewWithPhoto(viewModels: [PhotoViewModel]) {
+        DispatchQueue.main.async {
+            self.collection.isHidden = false
+            self.activityIndicator.isHidden = true
+            self.viewModels = viewModels
+            self.collection.reloadData()
+        }
+    }
+    
+    //MARK: - setupErrorView
+    func setupErrorView(with description: String) {
+        DispatchQueue.main.async {[self] in
+            activityIndicator.isHidden = true
+            view.addSubview(errorStackView)
+            errorStackView.addArrangedSubview(errorLabel)
+            errorStackView.addArrangedSubview(errorButton)
+            
+            errorStackView.centerY()
+            errorStackView.centerX()
+            errorStackView.trailing(-30)
+            errorStackView.leading(30)
+            errorLabel.trailing()
+            errorLabel.leading()
+            errorButton.trailing()
+            errorButton.leading()
+            
+            errorLabel.text = description
+            errorButton.addTarget(self,
+                                  action: #selector(reloadView),
+                                  for: .touchUpInside)
+            errorStackView.isHidden = false
+            errorLabel.isHidden = false
+            errorButton.isHidden = false
+        }
+    }
+    
 }
-// MARK: - Настройка таблицы 
+// MARK: - Настройка таблицы
 extension PhotosViewController {
     private func setup() {
+        collection.isHidden = true
         navigationController?.isNavigationBarHidden = false
-        title = photosNavTitle
+        navigationItem.titleView = searchBar
+        view.backgroundColor = .white
+        searchBar.placeholder = "Search photos"
+        searchBar.delegate = self
         collection.dataSource = self
         collection.delegate = self
         collection.register(PhotoCell.self)
-        collection.contentInset = UIEdgeInsets(top: 0, left: 10, bottom: 10, right: 10)
+        collection.contentInset = UIEdgeInsets(top: 0,
+                                               left: 10,
+                                               bottom: 10,
+                                               right: 10)
         view.addSubview(collection)
         collection.pins()
+        let tap = UITapGestureRecognizer(target: self,
+                                         action: #selector(dismissKeyboard))
+        searchBar.addGestureRecognizer(tap)
+        tabBarController?.tabBar.isHidden = false
+    }
+    //MARK: - setupWaitingIndicator
+    private func setupWaitingIndicator() {
+        view.addSubview(activityIndicator)
+        activityIndicator.startAnimating()
+        activityIndicator.centerX()
+        activityIndicator.centerY()
+        activityIndicator.isHidden = false
     }
 }
 //MARK: - UITableViewDataSource
 extension PhotosViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        100
+    func collectionView(_ collectionView: UICollectionView,
+                        numberOfItemsInSection section: Int) -> Int {
+        if !isSearchStarted {
+            return searchResultsViewModels.count
+        } else {
+            return viewModels.count
+        }
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collection.dequeueCell(cellType: PhotoCell.self, for: indexPath)
-        let data = Data()
-        cell.configure(with: data)
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collection.dequeueCell(cellType: PhotoCell.self,
+                                          for: indexPath)
+        if !isSearchStarted {
+            cell.configure(with: searchResultsViewModels[indexPath.item])
+        } else {
+            cell.configure(with: viewModels[indexPath.item])
+        }
         return cell
     }
 }
 //MARK: - UITableViewDelegate
 extension PhotosViewController: UICollectionViewDelegate {
-
+    func collectionView(_ collectionView: UICollectionView,
+                        didSelectItemAt indexPath: IndexPath) {
+        if !isSearchStarted {
+            output.navigateToPhotoInfo(viewModel: searchResultsViewModels[indexPath.item])
+        } else {
+            output.navigateToPhotoInfo(viewModel: viewModels[indexPath.item])
+        }
+    }
 }
 //MARK: - UICollectionViewDelegateFlowLayout
 extension PhotosViewController: UICollectionViewDelegateFlowLayout {
@@ -73,5 +209,33 @@ extension PhotosViewController: UICollectionViewDelegateFlowLayout {
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: view.frame.width / 2 - 20, height: view.frame.width / 2 - 20)
+    }
+}
+
+//MARK: - UISearchBarDelegate
+extension PhotosViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.isEmpty {
+            collection.reloadData()
+        }
+        output.search(query: searchText)
+        activityIndicator.isHidden = false
+        collection.isHidden = true
+    }
+    @objc
+    func dismissKeyboard() {
+        searchBar.endEditing(true)
+    }
+}
+//MARK: - Actions
+extension PhotosViewController {
+    @objc
+    func reloadView() {
+        activityIndicator.startAnimating()
+        activityIndicator.isHidden = false
+        output.viewDidLoad()
+        errorStackView.isHidden = true
+        errorLabel.isHidden = true
+        errorButton.isHidden = true
     }
 }

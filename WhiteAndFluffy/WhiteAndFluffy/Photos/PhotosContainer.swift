@@ -21,13 +21,17 @@ final class PhotosContainer {
 
 		presenter.view = viewController
 		presenter.moduleOutput = context.moduleOutput
-
+        router.viewController = viewController
 		interactor.output = presenter
 
-        return PhotosContainer(view: viewController, input: presenter, router: router)
+        return PhotosContainer(view: viewController,
+                               input: presenter,
+                               router: router)
 	}
 
-    private init(view: UIViewController, input: PhotosModuleInput, router: PhotosRouterInput) {
+    private init(view: UIViewController,
+                 input: PhotosModuleInput,
+                 router: PhotosRouterInput) {
 		self.viewController = view
         self.input = input
 		self.router = router

@@ -20,12 +20,16 @@ final class FavoritesPresenter {
         self.interactor = interactor
     }
 }
-
+//MARK: - FavoritesModuleInput
 extension FavoritesPresenter: FavoritesModuleInput {
 }
-
+//MARK: - FavoritesViewOutput
 extension FavoritesPresenter: FavoritesViewOutput {
+    func viewDidLoad() {
+        
+    }
 }
-
+//MARK: - FavoritesInteractorOutput
 extension FavoritesPresenter: FavoritesInteractorOutput {
+    
 }

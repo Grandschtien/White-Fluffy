@@ -19,6 +19,7 @@ protocol FavoritesViewInput: AnyObject {
 }
 
 protocol FavoritesViewOutput: AnyObject {
+    func viewDidLoad()
 }
 
 protocol FavoritesInteractorInput: AnyObject {
