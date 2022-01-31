@@ -23,9 +23,9 @@ class PhotoCell: UICollectionViewCell {
         view.backgroundColor = .white
         return view
     }()
+    
     func configure(with viewModel: PhotoViewModel) {
-        image.kf.setImage(with: viewModel.resourceOfImage,
-                          placeholder: UIImage(named: "photo"))
+        image.kf.setImage(with: viewModel.resourceOfImage)
         setup()
     }
     

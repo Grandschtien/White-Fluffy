@@ -33,10 +33,10 @@ final class PhotoInfoViewController: UIViewController {
         let button = UIButton(type: .roundedRect)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Обновить", for: .normal)
-        button.setTitleColor(UIColor(named: "buttonColor"), for: .normal)
+        button.setTitleColor(UIColor(named: Colors.buttonColor.rawValue), for: .normal)
         button.layer.cornerRadius = 10
         button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor(named: "buttonColor")?.cgColor
+        button.layer.borderColor = UIColor(named: Colors.buttonColor.rawValue)?.cgColor
         return button
     }()
     private let errorStackView:UIStackView = {
@@ -86,7 +86,7 @@ final class PhotoInfoViewController: UIViewController {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 10
-        button.backgroundColor = UIColor(named: "buttonColor")
+        button.backgroundColor = UIColor(named: Colors.buttonColor.rawValue)
         button.tintColor = .white
         return button
     }()
@@ -100,7 +100,7 @@ final class PhotoInfoViewController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         output.viewDidLoad()
@@ -201,9 +201,9 @@ extension PhotoInfoViewController: PhotoInfoViewInput {
             self.dateAndLocationLabel.text = "\(viewModel.date), \(viewModel.location)"
             self.downloadsLabel.text = "\(viewModel.dowloads)"
             if viewModel.isLiked {
-                self.favoriteButton.setTitle("Убрать из избранного", for: .normal)
+                self.favoriteButton.setTitle(removeFromFavorites, for: .normal)
             } else {
-                self.favoriteButton.setTitle("Добавить в избранное", for: .normal)
+                self.favoriteButton.setTitle(addToFavorites, for: .normal)
             }
             self.image.isHidden = false
             self.nameLabel.isHidden = false
@@ -220,11 +220,11 @@ extension PhotoInfoViewController {
     @objc
     private func likePhoto(){
         if photoViewModel?.isLiked == false {
-            self.favoriteButton.setTitle("Убрать из избранного", for: .normal)
+            self.favoriteButton.setTitle(removeFromFavorites, for: .normal)
             photoViewModel?.isLiked = true
             output.likePhoto(key: photoViewModel?.id ?? "")
         } else {
-            self.favoriteButton.setTitle("Добавить в избранное", for: .normal)
+            self.favoriteButton.setTitle(addToFavorites, for: .normal)
             photoViewModel?.isLiked = false
             output.unlikePhoto(key: photoViewModel?.id ?? "")
         }

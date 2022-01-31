@@ -37,14 +37,15 @@ final class PhotosViewController: UIViewController {
         label.numberOfLines = 2
         return label
     }()
+    
     private let errorButton: UIButton = {
         let button = UIButton(type: .roundedRect)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Обновить", for: .normal)
-        button.setTitleColor(UIColor(named: "buttonColor"), for: .normal)
+        button.setTitleColor(UIColor(named: Colors.buttonColor.rawValue), for: .normal)
         button.layer.cornerRadius = 10
         button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor(named: "buttonColor")?.cgColor
+        button.layer.borderColor = UIColor(named: Colors.buttonColor.rawValue)?.cgColor
         return button
     }()
     private let errorStackView:UIStackView = {
@@ -75,12 +76,14 @@ final class PhotosViewController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        output.viewDidLoad()
         setup()
         setupWaitingIndicator()
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        reloadView()
     }
 }
 //MARK: - PhotosViewInput

@@ -14,7 +14,8 @@ final class KingFisherManager {
         guard let url = url else {
             return nil
         }
-        let resource = ImageResource(downloadURL: url, cacheKey: url.absoluteString)
+        let resource = ImageResource(downloadURL: url,
+                                     cacheKey: url.absoluteString)
         return resource
     }
 }

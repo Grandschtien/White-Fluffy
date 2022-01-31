@@ -56,5 +56,3 @@ struct Urls: Codable {
     let raw, full, regular, small: String
     let thumb: String
 }
-
-// Экран подробной информации содержит в себе фотографию, имя автора, дату создания, местоположение и количество скачиваний.

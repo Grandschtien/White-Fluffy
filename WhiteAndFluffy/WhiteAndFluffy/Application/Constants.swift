@@ -17,3 +17,11 @@ let ruCharacters = "йцукенгшщзхъфывапролджэёячсмит
 let noUserName = "Нет имени пользователя"
 let noLocation = "Местоположение неизвестно"
 let noDate: String = "Дата неизвестна"
+// Для кнопок избранного
+
+let removeFromFavorites = "Убрать из избранного"
+let addToFavorites = "Добавить в избранное"
+
+enum Colors: String {
+    case buttonColor
+}
