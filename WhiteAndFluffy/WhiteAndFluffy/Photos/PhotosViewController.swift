@@ -83,6 +83,7 @@ final class PhotosViewController: UIViewController {
         setupWaitingIndicator()
     }
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         reloadView()
     }
 }
@@ -158,7 +159,6 @@ extension PhotosViewController {
                                                right: 10)
         view.addSubview(collection)
         collection.pins()
-        tabBarController?.tabBar.isHidden = false
         searchBar.searchTextField.addTarget(self, action: #selector(removeRuCharacters(_:)), for: .editingChanged)
     }
     

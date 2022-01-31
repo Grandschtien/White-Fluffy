@@ -24,4 +24,5 @@ let addToFavorites = "Добавить в избранное"
 
 enum Colors: String {
     case buttonColor
+    case tabBarColor
 }

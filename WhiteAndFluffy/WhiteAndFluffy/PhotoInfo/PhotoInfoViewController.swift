@@ -64,6 +64,7 @@ final class PhotoInfoViewController: UIViewController {
         label.font = UIFont.systemFont(ofSize: 20, weight: .regular)
         label.textColor = .lightGray
         label.numberOfLines = 0
+        label.textAlignment = .center
         return label
     }()
     
@@ -72,6 +73,7 @@ final class PhotoInfoViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 30, weight: .heavy)
         label.textColor = .black
+        label.textAlignment = .center
         return label
     }()
     private let downloadsLabel: UILabel = {
@@ -79,6 +81,7 @@ final class PhotoInfoViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 20, weight: .light)
         label.textColor = .lightGray
+        label.textAlignment = .center
         return label
     }()
     
@@ -127,7 +130,6 @@ extension PhotoInfoViewController {
         nameLabel.trailing(-30)
         nameLabel.topAnchor.constraint(equalTo: image.bottomAnchor,
                                        constant: 20).isActive = true
-        nameLabel.textAlignment = .center
 
         
         view.addSubview(dateAndLocationLabel)
@@ -136,16 +138,13 @@ extension PhotoInfoViewController {
         dateAndLocationLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor,
                                                   constant: 15).isActive = true
        
-        dateAndLocationLabel.textAlignment = .center
         
         view.addSubview(downloadsLabel)
         downloadsLabel.leading(30)
         downloadsLabel.trailing(-30)
         downloadsLabel.topAnchor.constraint(equalTo: dateAndLocationLabel.bottomAnchor,
                                                   constant: 15).isActive = true
-        
-        downloadsLabel.textAlignment = .center
-        
+                
         view.addSubview(favoriteButton)
         
         favoriteButton.leading(30)

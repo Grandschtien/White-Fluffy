@@ -30,7 +30,6 @@ final class Coordinator: CoordinatorProtocol {
             self.navigationControllers[$0]
         }
         tabBarController.setViewControllers(navigationControllers, animated: true)
-        tabBarController.tabBar.barTintColor = UIColor(named: "tabBarColor")
         window.rootViewController = tabBarController
         window.makeKeyAndVisible()
     }
@@ -65,8 +64,6 @@ extension Coordinator {
                                           tag: navControllerKey.rawValue)
             navigationController.tabBarItem = tabBarItem
             result[navControllerKey] = navigationController
-            
-            navigationController.isNavigationBarHidden = true
         }
         return result
     }

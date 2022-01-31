@@ -70,6 +70,7 @@ final class FavoritesViewController: UIViewController {
         setup()
 	}
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         table.isHidden = true
         reloadView()
     }
@@ -77,9 +78,10 @@ final class FavoritesViewController: UIViewController {
 //MARK: - Настройка таблицы
 extension FavoritesViewController {
     private func setup() {
-        navigationController?.isNavigationBarHidden = false
         view.backgroundColor = .white
         title = favoritesNavTitle
+        navigationController?.navigationBar.isTranslucent = true
+        navigationController?.navigationBar.backgroundColor = .white
         table.dataSource = self
         table.delegate = self
         table.separatorStyle = .none
