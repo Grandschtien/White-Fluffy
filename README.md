@@ -1,1 +1,4 @@
 # White-Fluffy
+```
+pod install
+```
