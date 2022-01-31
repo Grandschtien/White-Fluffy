@@ -25,7 +25,9 @@ class FavoritePhotoCell: UITableViewCell {
         var image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
         image.layer.cornerRadius = 10
-        image.backgroundColor = .red
+        image.contentMode = .scaleAspectFill
+        image.layer.masksToBounds = true
+        image.backgroundColor = .lightGray
         return image
     }()
     
@@ -38,9 +40,10 @@ class FavoritePhotoCell: UITableViewCell {
         return stack
     }()
     
-    func configure() {
+    func configure(viewModel: PhotoViewModel) {
         setup()
-        name.text = "Egor"
+        name.text = viewModel.userName
+        image.kf.setImage(with: viewModel.resourceOfImage)
     }
     private func setup() {
         addSubview(containerView)

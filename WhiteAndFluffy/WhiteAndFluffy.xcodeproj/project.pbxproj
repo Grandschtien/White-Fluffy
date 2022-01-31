@@ -43,6 +43,7 @@
 		60B840CF27A69C7C00386461 /* SearchResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B840CE27A69C7C00386461 /* SearchResults.swift */; };
 		60B840D127A6B43400386461 /* PhotoStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B840D027A6B43400386461 /* PhotoStatistics.swift */; };
 		60B840D327A6BE1900386461 /* PhotoInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B840D227A6BE1900386461 /* PhotoInfoViewModel.swift */; };
+		60B840D527A6F6AA00386461 /* UIActivitiIndicatorView + setup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B840D427A6F6AA00386461 /* UIActivitiIndicatorView + setup.swift */; };
 		C673748ADC3B95D6EA98A560 /* Pods_WhiteAndFluffy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5449ABD841CF5A37FA6DB9E /* Pods_WhiteAndFluffy.framework */; };
 /* End PBXBuildFile section */
 
@@ -85,6 +86,7 @@
 		60B840CE27A69C7C00386461 /* SearchResults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResults.swift; sourceTree = "<group>"; };
 		60B840D027A6B43400386461 /* PhotoStatistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoStatistics.swift; sourceTree = "<group>"; };
 		60B840D227A6BE1900386461 /* PhotoInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoInfoViewModel.swift; sourceTree = "<group>"; };
+		60B840D427A6F6AA00386461 /* UIActivitiIndicatorView + setup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIActivitiIndicatorView + setup.swift"; sourceTree = "<group>"; };
 		70DA385FA77B9E798B03E80C /* Pods-WhiteAndFluffy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WhiteAndFluffy.release.xcconfig"; path = "Target Support Files/Pods-WhiteAndFluffy/Pods-WhiteAndFluffy.release.xcconfig"; sourceTree = "<group>"; };
 		F1C75DA39A6FE6A131C47B70 /* Pods-WhiteAndFluffy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WhiteAndFluffy.debug.xcconfig"; path = "Target Support Files/Pods-WhiteAndFluffy/Pods-WhiteAndFluffy.debug.xcconfig"; sourceTree = "<group>"; };
 		F5449ABD841CF5A37FA6DB9E /* Pods_WhiteAndFluffy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WhiteAndFluffy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -156,6 +158,7 @@
 				6006FD1A27A5CD4800F14C97 /* Constants.swift */,
 				60B840C527A6619500386461 /* NetworkService.swift */,
 				60B840CC27A685EB00386461 /* KingFisherService.swift */,
+				60B840D427A6F6AA00386461 /* UIActivitiIndicatorView + setup.swift */,
 			);
 			path = Application;
 			sourceTree = "<group>";
@@ -359,6 +362,7 @@
 				606140E727A5D7290011E4D9 /* FavoritePhotoCell.swift in Sources */,
 				6006FD0E27A5BF0200F14C97 /* PhotoInfoPresenter.swift in Sources */,
 				6006FD0627A5BEDB00F14C97 /* PhotosContainer.swift in Sources */,
+				60B840D527A6F6AA00386461 /* UIActivitiIndicatorView + setup.swift in Sources */,
 				60B840C927A6620000386461 /* Photo.swift in Sources */,
 				6006FD0527A5BEDB00F14C97 /* PhotosInteractor.swift in Sources */,
 				6006FD1327A5BF0200F14C97 /* PhotoInfoContainer.swift in Sources */,

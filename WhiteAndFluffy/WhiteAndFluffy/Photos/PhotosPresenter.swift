@@ -73,11 +73,12 @@ extension PhotosPresenter {
             let likes = photo.likes
             let date = photo.createdAt
             let isLiked = photo.likedByUser
-            return PhotoViewModel(id: id, resourceOfImage: resource,
-                                  userName: userName ?? "Нет имени пользователя",
-                                  location: location ?? "Местоположение неизвестно",
+            return PhotoViewModel(id: id,
+                                  resourceOfImage: resource,
+                                  userName: userName ?? noUserName,
+                                  location: location ?? noLocation,
                                   likes: likes ?? 0,
-                                  date: date ?? "Дата неизвестна",
+                                  date: date ?? noDate,
                                   isLiked: isLiked)
         }
     }
@@ -93,11 +94,12 @@ extension PhotosPresenter {
             let likes = photo.likes
             let date = photo.createdAt
             let isLiked = photo.likedByUser
-            return PhotoViewModel(id: id, resourceOfImage: resource,
-                                  userName: userName ?? "Нет имени пользователя",
-                                  location: location ?? "Местоположение неизвестно",
+            return PhotoViewModel(id: id,
+                                  resourceOfImage: resource,
+                                  userName: userName ?? noUserName,
+                                  location: location ?? noLocation,
                                   likes: likes ?? 0,
-                                  date: date ?? "Дата неизвестна",
+                                  date: date ?? noDate,
                                   isLiked: isLiked)
         }
     }

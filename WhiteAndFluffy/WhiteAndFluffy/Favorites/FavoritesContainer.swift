@@ -21,7 +21,7 @@ final class FavoritesContainer {
 
 		presenter.view = viewController
 		presenter.moduleOutput = context.moduleOutput
-
+        router.viewController = viewController
 		interactor.output = presenter
 
         return FavoritesContainer(view: viewController, input: presenter, router: router)

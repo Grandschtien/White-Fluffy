@@ -12,12 +12,15 @@ final class PhotosViewController: UIViewController {
     private let output: PhotosViewOutput
     private var viewModels = [PhotoViewModel]()
     private var searchResultsViewModels: [PhotoViewModel] = []
-    private var isSearchStarted: Bool {
-        return searchBar.text?.isEmpty ?? true
-    }
     
+    private var isFiltering: Bool {
+        return !isSearchBarEmpty
+    }
+    private var isSearchBarEmpty: Bool {
+            return searchBar.text?.isEmpty ?? true
+        }
     private var searchBar = UISearchBar()
-    private var activityIndicator:UIActivityIndicatorView = {
+    private var activityIndicator: UIActivityIndicatorView = {
         let activity = UIActivityIndicatorView()
         activity.translatesAutoresizingMaskIntoConstraints = false
         activity.style = UIActivityIndicatorView.Style.large
@@ -79,10 +82,6 @@ final class PhotosViewController: UIViewController {
         setup()
         setupWaitingIndicator()
     }
-    override func viewWillAppear(_ animated: Bool) {
-        tabBarController?.tabBar.isHidden = false
-    }
-    
 }
 //MARK: - PhotosViewInput
 extension PhotosViewController: PhotosViewInput {
@@ -90,8 +89,8 @@ extension PhotosViewController: PhotosViewInput {
     func updateSearchResults(viewModels: [PhotoViewModel]) {
         DispatchQueue.main.async {
             self.searchResultsViewModels = viewModels
-            if self.searchResultsViewModels.isEmpty {
-                print(self.searchResultsViewModels.count)
+            if self.searchResultsViewModels.count == 0 {
+                self.searchResultsViewModels = []
                 return
             }
             self.collection.isHidden = false
@@ -112,6 +111,7 @@ extension PhotosViewController: PhotosViewInput {
     //MARK: - setupErrorView
     func setupErrorView(with description: String) {
         DispatchQueue.main.async {[self] in
+            collection.isHidden = true
             activityIndicator.isHidden = true
             view.addSubview(errorStackView)
             errorStackView.addArrangedSubview(errorLabel)
@@ -155,25 +155,21 @@ extension PhotosViewController {
                                                right: 10)
         view.addSubview(collection)
         collection.pins()
-        let tap = UITapGestureRecognizer(target: self,
-                                         action: #selector(dismissKeyboard))
-        searchBar.addGestureRecognizer(tap)
         tabBarController?.tabBar.isHidden = false
+        searchBar.searchTextField.addTarget(self, action: #selector(removeRuCharacters(_:)), for: .editingChanged)
     }
+    
     //MARK: - setupWaitingIndicator
     private func setupWaitingIndicator() {
         view.addSubview(activityIndicator)
-        activityIndicator.startAnimating()
-        activityIndicator.centerX()
-        activityIndicator.centerY()
-        activityIndicator.isHidden = false
+        activityIndicator.setup()
     }
 }
 //MARK: - UITableViewDataSource
 extension PhotosViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
-        if !isSearchStarted {
+        if isFiltering {
             return searchResultsViewModels.count
         } else {
             return viewModels.count
@@ -184,7 +180,7 @@ extension PhotosViewController: UICollectionViewDataSource {
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collection.dequeueCell(cellType: PhotoCell.self,
                                           for: indexPath)
-        if !isSearchStarted {
+        if isFiltering {
             cell.configure(with: searchResultsViewModels[indexPath.item])
         } else {
             cell.configure(with: viewModels[indexPath.item])
@@ -196,11 +192,15 @@ extension PhotosViewController: UICollectionViewDataSource {
 extension PhotosViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView,
                         didSelectItemAt indexPath: IndexPath) {
-        if !isSearchStarted {
+        if isFiltering {
             output.navigateToPhotoInfo(viewModel: searchResultsViewModels[indexPath.item])
         } else {
             output.navigateToPhotoInfo(viewModel: viewModels[indexPath.item])
         }
+    }
+   
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        searchBar.endEditing(true)
     }
 }
 //MARK: - UICollectionViewDelegateFlowLayout
@@ -219,12 +219,6 @@ extension PhotosViewController: UISearchBarDelegate {
             collection.reloadData()
         }
         output.search(query: searchText)
-        activityIndicator.isHidden = false
-        collection.isHidden = true
-    }
-    @objc
-    func dismissKeyboard() {
-        searchBar.endEditing(true)
     }
 }
 //MARK: - Actions
@@ -237,5 +231,17 @@ extension PhotosViewController {
         errorStackView.isHidden = true
         errorLabel.isHidden = true
         errorButton.isHidden = true
+    }
+    
+    @objc
+    func removeRuCharacters(_ sender: UISearchTextField) {
+        guard let text = sender.text else { return }
+        let ruCharacters = ruCharacters
+        sender.text = text.filter({ char in
+            if ruCharacters.contains(char) {
+                return false
+            }
+            return true
+        })
     }
 }

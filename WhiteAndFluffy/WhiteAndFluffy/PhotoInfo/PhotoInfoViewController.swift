@@ -10,7 +10,8 @@ import UIKit
 
 final class PhotoInfoViewController: UIViewController {
     private let output: PhotoInfoViewOutput
-    
+    private var photoViewModel: PhotoInfoViewModel?
+    private var isFavoritePhoto = false
     private var activityIndicator:UIActivityIndicatorView = {
         let activity = UIActivityIndicatorView()
         activity.translatesAutoresizingMaskIntoConstraints = false
@@ -62,6 +63,7 @@ final class PhotoInfoViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 20, weight: .regular)
         label.textColor = .lightGray
+        label.numberOfLines = 0
         return label
     }()
     
@@ -153,17 +155,15 @@ extension PhotoInfoViewController {
         
         favoriteButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
         favoriteButton.addTarget(self, action: #selector(likePhoto), for: .touchUpInside)
-        tabBarController?.tabBar.isHidden = true
     }
     //MARK: - setupWaitingIndicator
     private func setupWaitingIndicator() {
         view.addSubview(activityIndicator)
-        activityIndicator.startAnimating()
-        activityIndicator.centerX()
-        activityIndicator.centerY()
-        activityIndicator.isHidden = false
+        activityIndicator.setup()
     }
+   
 }
+
 //MARK: - PhotoInfoViewInput
 extension PhotoInfoViewController: PhotoInfoViewInput {
     func setupErrorView(with description: String) {
@@ -194,6 +194,7 @@ extension PhotoInfoViewController: PhotoInfoViewInput {
     
     func updateViewWithPhotoStatistics(viewModel: PhotoInfoViewModel) {
         DispatchQueue.main.async {
+            self.photoViewModel = viewModel
             self.activityIndicator.isHidden = false
             self.image.kf.setImage(with: viewModel.image)
             self.nameLabel.text = "\(viewModel.authorName)"
@@ -218,7 +219,15 @@ extension PhotoInfoViewController: PhotoInfoViewInput {
 extension PhotoInfoViewController {
     @objc
     private func likePhoto(){
-        
+        if photoViewModel?.isLiked == false {
+            self.favoriteButton.setTitle("Убрать из избранного", for: .normal)
+            photoViewModel?.isLiked = true
+            output.likePhoto(key: photoViewModel?.id ?? "")
+        } else {
+            self.favoriteButton.setTitle("Добавить в избранное", for: .normal)
+            photoViewModel?.isLiked = false
+            output.unlikePhoto(key: photoViewModel?.id ?? "")
+        }
     }
     @objc
     func reloadView() {

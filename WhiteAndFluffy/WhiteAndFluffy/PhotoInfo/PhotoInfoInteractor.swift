@@ -14,6 +14,14 @@ final class PhotoInfoInteractor {
 }
 
 extension PhotoInfoInteractor: PhotoInfoInteractorInput {
+    func setLikedPhoto(key: String) {
+        networkService.likePhoto(key: key)
+    }
+    
+    func setUnlikedPhoto(key: String) {
+        networkService.unlikePhoto(key: key)
+    }
+    
     func loadStatisticsOfPhoto(for key: String) {
         networkService.getPhotoStatisticsForKey(key: key) {[weak self] result in
                 

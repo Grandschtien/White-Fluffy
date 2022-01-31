@@ -16,17 +16,24 @@ protocol FavoritesModuleOutput: AnyObject {
 }
 
 protocol FavoritesViewInput: AnyObject {
+    func setupErrorView(with description: String)
+    func updateViewsWithLikedPhotos(viewModels: [PhotoViewModel])
 }
 
 protocol FavoritesViewOutput: AnyObject {
     func viewDidLoad()
+    func navigateToPhotoInfo(viewModel: PhotoViewModel)
 }
 
 protocol FavoritesInteractorInput: AnyObject {
+    func loadLikedPhotos()
 }
 
 protocol FavoritesInteractorOutput: AnyObject {
+    func didCatchError(errorDescription: String)
+    func didLoadLikedPhotos(photos: [Photo])
 }
 
 protocol FavoritesRouterInput: AnyObject {
+    func gotToPhotoInfo(viewModel: PhotoViewModel)
 }

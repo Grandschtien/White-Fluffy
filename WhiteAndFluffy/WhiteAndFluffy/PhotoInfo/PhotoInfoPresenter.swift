@@ -29,6 +29,13 @@ extension PhotoInfoPresenter: PhotoInfoModuleInput {
 }
 // MARK: - PhotoInfoViewOutput
 extension PhotoInfoPresenter: PhotoInfoViewOutput {
+    func likePhoto(key: String) {
+        interactor.setLikedPhoto(key: key)
+    }
+    
+    func unlikePhoto(key: String) {
+        interactor.setUnlikedPhoto(key: key)
+    }
     func viewDidLoad() {
         interactor.loadStatisticsOfPhoto(for: photoViewModel?.id ?? "")
     }
@@ -46,13 +53,15 @@ extension PhotoInfoPresenter: PhotoInfoInteractorOutput {
 //MARK: - Создание viewModels
 extension PhotoInfoPresenter {
     private func makeViewModel(statistics: Statistics) -> PhotoInfoViewModel {
+        let id = photoViewModel?.id ?? ""
         let image = photoViewModel?.resourceOfImage
-        let authorName = photoViewModel?.userName ?? "Имя пользователя неизвестно"
-        let date = photoViewModel?.date.dropLast(15) ?? "Дата неизвестна"
-        let location = photoViewModel?.location ?? "Местонахождение неизвестно"
+        let authorName = photoViewModel?.userName ?? noUserName
+        let date = photoViewModel?.date.dropLast(15) ?? noDate.compactMap{$0}
+        let location = photoViewModel?.location ?? noLocation
         let downloads = "Кол-во скачиваний \(statistics.downloads.total)"
         let isLiked = photoViewModel?.isLiked ?? false
-        return PhotoInfoViewModel(image: image,
+        return PhotoInfoViewModel(id: id,
+                                  image: image,
                                   authorName: authorName,
                                   date: String(date),
                                   location: location,

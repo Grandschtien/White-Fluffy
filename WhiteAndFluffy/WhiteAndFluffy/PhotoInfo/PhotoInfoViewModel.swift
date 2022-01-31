@@ -9,10 +9,11 @@ import Foundation
 import Kingfisher
 
 struct PhotoInfoViewModel {
+    let id: String
     let image: ImageResource?
     let authorName: String
     let date: String
     let location: String
     let dowloads: String
-    let isLiked: Bool
+    var isLiked: Bool
 }
