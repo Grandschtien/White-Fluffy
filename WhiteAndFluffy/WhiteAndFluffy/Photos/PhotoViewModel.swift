@@ -7,6 +7,7 @@
 
 import Foundation
 import Kingfisher
+
 struct PhotoViewModel {
     let id: String
     let resourceOfImage: ImageResource?

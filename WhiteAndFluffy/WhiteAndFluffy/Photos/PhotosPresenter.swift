@@ -82,6 +82,7 @@ extension PhotosPresenter {
                                   isLiked: isLiked)
         }
     }
+    
     func makeSearchedViewModels(photos: SearchResults) -> [PhotoViewModel?] {
         return photos.results.map { photo in
             guard let url = URL(string: photo.urls.regular) else  {
