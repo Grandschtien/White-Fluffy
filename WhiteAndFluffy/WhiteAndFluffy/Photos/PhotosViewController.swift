@@ -80,11 +80,8 @@ final class PhotosViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+        output.viewDidLoad()
         setupWaitingIndicator()
-    }
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        reloadView()
     }
 }
 //MARK: - PhotosViewInput

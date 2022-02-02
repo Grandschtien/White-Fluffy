@@ -29,6 +29,7 @@ extension PhotoInfoPresenter: PhotoInfoModuleInput {
 }
 // MARK: - PhotoInfoViewOutput
 extension PhotoInfoPresenter: PhotoInfoViewOutput {
+    
     func likePhoto(key: String) {
         interactor.setLikedPhoto(key: key)
     }
@@ -39,27 +40,34 @@ extension PhotoInfoPresenter: PhotoInfoViewOutput {
     func viewDidLoad() {
         interactor.loadStatisticsOfPhoto(for: photoViewModel?.id ?? "")
     }
+    func likePhotoNotification(viewModel: PhotoInfoViewModel) {
+        interactor.postLikePhotoNotification(viewModel: viewModel)
+    }
+    
+    func unLikePhotoNotification(viewModel: PhotoInfoViewModel) {
+        interactor.postUnLikePhotoNotification(viewModel: viewModel)
+    }
 }
 // MARK: - PhotoInfoInteractorOutput
 extension PhotoInfoPresenter: PhotoInfoInteractorOutput {
     func didCatchError(errorDescription: String) {
         view?.setupErrorView(with: errorDescription)
     }
-    func recivePhotoStatistics(photo: Statistics) {
-       let viewModel = makeViewModel(statistics: photo)
+    func recivePhotoStatistics(photo: PhotoWithStatistics) {
+       let viewModel = makeViewModel(photoWithStatistics: photo)
         view?.updateViewWithPhotoStatistics(viewModel: viewModel)
     }
 }
 //MARK: - Создание viewModels
 extension PhotoInfoPresenter {
-    private func makeViewModel(statistics: Statistics) -> PhotoInfoViewModel {
+    private func makeViewModel(photoWithStatistics: PhotoWithStatistics) -> PhotoInfoViewModel {
         let id = photoViewModel?.id ?? ""
         let image = photoViewModel?.resourceOfImage
         let authorName = photoViewModel?.userName ?? noUserName
         let date = photoViewModel?.date.dropLast(15) ?? noDate.compactMap{$0}
         let location = photoViewModel?.location ?? noLocation
-        let downloads = "Кол-во скачиваний \(statistics.downloads.total)"
-        let isLiked = photoViewModel?.isLiked ?? false
+        let downloads = "Кол-во скачиваний \(photoWithStatistics.statistics.downloads.total)"
+        let isLiked = photoWithStatistics.isLikedByUser
         return PhotoInfoViewModel(id: id,
                                   image: image,
                                   authorName: authorName,

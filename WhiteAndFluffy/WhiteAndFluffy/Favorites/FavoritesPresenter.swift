@@ -8,16 +8,26 @@
 
 import Foundation
 
-final class FavoritesPresenter {
-	weak var view: FavoritesViewInput?
+final class FavoritesPresenter: LikeProtocol{
+    weak var view: FavoritesViewInput?
     weak var moduleOutput: FavoritesModuleOutput?
     
-	private let router: FavoritesRouterInput
-	private let interactor: FavoritesInteractorInput
+    private let router: FavoritesRouterInput
+    private let interactor: FavoritesInteractorInput
+    private let notificationCenter: NotificationCenter = NotificationCenter.default
     
     init(router: FavoritesRouterInput, interactor: FavoritesInteractorInput) {
         self.router = router
         self.interactor = interactor
+        notificationCenter.addObserver(self,
+                                       selector: #selector(newPhotoLiked),
+                                       name: likeNotification,
+                                       object: nil)
+        notificationCenter.addObserver(self,
+                                       selector: #selector(photoUnLiked),
+                                       name: unLikeNotification,
+                                       object: nil)
+        
     }
 }
 //MARK: - FavoritesModuleInput
@@ -25,6 +35,22 @@ extension FavoritesPresenter: FavoritesModuleInput {
 }
 //MARK: - FavoritesViewOutput
 extension FavoritesPresenter: FavoritesViewOutput {
+    func addObeservers() {
+        notificationCenter.addObserver(self,
+                                       selector: #selector(newPhotoLiked),
+                                       name: likeNotification,
+                                       object: nil)
+        notificationCenter.addObserver(self,
+                                       selector: #selector(photoUnLiked),
+                                       name: unLikeNotification,
+                                       object: nil)
+    }
+    
+    func removeObservers() {
+        notificationCenter.removeObserver(likeNotification)
+        notificationCenter.removeObserver(unLikeNotification)
+    }
+    
     func navigateToPhotoInfo(viewModel: PhotoViewModel) {
         router.gotToPhotoInfo(viewModel: viewModel)
     }
@@ -67,5 +93,16 @@ extension FavoritesPresenter {
                                   date: date ?? noDate,
                                   isLiked: isLiked)
         }
+    }
+}
+//MARK: - Notifications
+extension FavoritesPresenter {
+    @objc
+    private func newPhotoLiked() {
+        view?.photoWasLiked()
+    }
+    @objc
+    private func photoUnLiked() {
+        view?.photoWasUnLiked()
     }
 }

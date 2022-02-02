@@ -29,6 +29,9 @@ final class Coordinator: CoordinatorProtocol {
         let navigationControllers = NavControllerType.allCases.compactMap {
             self.navigationControllers[$0]
         }
+        let tabBarAppearance = UITabBarAppearance()
+        tabBarAppearance.configureWithDefaultBackground()
+        tabBarController.tabBar.scrollEdgeAppearance = tabBarAppearance
         tabBarController.setViewControllers(navigationControllers, animated: true)
         window.rootViewController = tabBarController
         window.makeKeyAndVisible()
@@ -59,6 +62,9 @@ extension Coordinator {
         var result: [NavControllerType: UINavigationController] = [:]
         NavControllerType.allCases.forEach { navControllerKey in
             let navigationController = UINavigationController()
+            let navBarAppearance = UINavigationBarAppearance()
+            navBarAppearance.configureWithDefaultBackground()
+            navigationController.navigationBar.scrollEdgeAppearance = navBarAppearance
             let tabBarItem = UITabBarItem(title: navControllerKey.title,
                                           image: navControllerKey.image,
                                           tag: navControllerKey.rawValue)

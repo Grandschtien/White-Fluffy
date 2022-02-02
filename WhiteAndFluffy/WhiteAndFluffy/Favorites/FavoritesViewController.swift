@@ -52,6 +52,7 @@ final class FavoritesViewController: UIViewController {
     private let table: UITableView = {
         let table = UITableView()
         table.translatesAutoresizingMaskIntoConstraints = false
+        table.separatorStyle = .none
         return table
     }()
     init(output: FavoritesViewOutput) {
@@ -66,13 +67,17 @@ final class FavoritesViewController: UIViewController {
     //MARK: - Lifecycle
 	override func viewDidLoad() {
 		super.viewDidLoad()
+        output.viewDidLoad()
         setupWaitingIndicator()
         setup()
 	}
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        output.removeObservers()
+    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        table.isHidden = true
-        reloadView()
+        output.removeObservers()
     }
 }
 //MARK: - Настройка таблицы
@@ -80,11 +85,8 @@ extension FavoritesViewController {
     private func setup() {
         view.backgroundColor = .white
         title = favoritesNavTitle
-        navigationController?.navigationBar.isTranslucent = true
-        navigationController?.navigationBar.backgroundColor = .white
         table.dataSource = self
         table.delegate = self
-        table.separatorStyle = .none
         table.register(FavoritePhotoCell.self)
         view.addSubview(table)
         table.pins()
@@ -97,6 +99,16 @@ extension FavoritesViewController {
 }
 //MARK: - FavoritesViewInput
 extension FavoritesViewController: FavoritesViewInput {
+    func photoWasLiked() {
+        table.isHidden = true
+        reloadView()
+    }
+    
+    func photoWasUnLiked() {
+        table.isHidden = true
+        reloadView()
+    }
+    
     func setupErrorView(with description: String) {
         DispatchQueue.main.async {[self] in
             activityIndicator.isHidden = true

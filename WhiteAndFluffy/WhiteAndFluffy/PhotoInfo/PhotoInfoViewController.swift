@@ -110,6 +110,9 @@ final class PhotoInfoViewController: UIViewController {
         setup()
         setupWaitingIndicator()
     }
+    override func viewWillDisappear(_ animated: Bool) {
+        tabBarController?.tabBar.isHidden = false
+    }
 }
 //MARK: - Настройка layout
 extension PhotoInfoViewController {
@@ -119,6 +122,7 @@ extension PhotoInfoViewController {
         self.dateAndLocationLabel.isHidden = true
         self.downloadsLabel.isHidden = true
         self.favoriteButton.isHidden = true
+        tabBarController?.tabBar.isHidden = true
         view.backgroundColor = .white
         view.addSubview(image)
         image.top(30, isIncludeSafeArea: true)
@@ -195,7 +199,8 @@ extension PhotoInfoViewController: PhotoInfoViewInput {
         DispatchQueue.main.async {
             self.photoViewModel = viewModel
             self.activityIndicator.isHidden = false
-            self.image.kf.setImage(with: viewModel.image)
+            self.title = viewModel.authorName
+            self.image.kf.setImage(with: viewModel.image, options: [.onlyFromCache, .cacheOriginalImage])
             self.nameLabel.text = "\(viewModel.authorName)"
             self.dateAndLocationLabel.text = "\(viewModel.date), \(viewModel.location)"
             self.downloadsLabel.text = "\(viewModel.dowloads)"
@@ -218,15 +223,19 @@ extension PhotoInfoViewController: PhotoInfoViewInput {
 extension PhotoInfoViewController {
     @objc
     private func likePhoto(){
+        guard let viewModel = photoViewModel else { return }
         if photoViewModel?.isLiked == false {
             self.favoriteButton.setTitle(removeFromFavorites, for: .normal)
             photoViewModel?.isLiked = true
-            output.likePhoto(key: photoViewModel?.id ?? "")
+            output.likePhoto(key: viewModel.id)
+            output.likePhotoNotification(viewModel: viewModel)
         } else {
             self.favoriteButton.setTitle(addToFavorites, for: .normal)
             photoViewModel?.isLiked = false
-            output.unlikePhoto(key: photoViewModel?.id ?? "")
+            output.unlikePhoto(key: viewModel.id)
+            output.unLikePhotoNotification(viewModel: viewModel)
         }
+        
     }
     @objc
     func reloadView() {

@@ -22,6 +22,8 @@ protocol NetworkProtocol {
     func unlikePhoto(key: String)
     func likePhoto(key: String)
     func getLikedPhotos(completion: @escaping (Result<Data, Error>) -> ())
+    func getPhotoForKey(key: String,
+                        completion: @escaping (Result<Data,Error>) -> ()) 
 }
 
 final class NetworkService: NetworkProtocol {
@@ -70,6 +72,22 @@ final class NetworkService: NetworkProtocol {
         }
         var urlRequest = URLRequest(url: url)
         urlRequest.setValue("Client-ID \(apiKey)", forHTTPHeaderField: "Authorization")
+        URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+            guard let data = data else {
+                completion(.failure(RequestErrors.noInternetConnection))
+                return
+            }
+            completion(.success(data))
+        }.resume()
+    }
+    
+    func getPhotoForKey(key: String,
+                        completion: @escaping (Result<Data,Error>) -> ()) {
+        guard let url = URL.with(string: "/photos/\(key)/") else {
+            return
+        }
+        var urlRequest = URLRequest(url: url)
+        urlRequest.setValue("Bearer \(authCode)", forHTTPHeaderField: "Authorization")
         URLSession.shared.dataTask(with: urlRequest) { data, response, error in
             guard let data = data else {
                 completion(.failure(RequestErrors.noInternetConnection))

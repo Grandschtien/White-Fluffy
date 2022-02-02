@@ -18,11 +18,15 @@ protocol FavoritesModuleOutput: AnyObject {
 protocol FavoritesViewInput: AnyObject {
     func setupErrorView(with description: String)
     func updateViewsWithLikedPhotos(viewModels: [PhotoViewModel])
+    func photoWasLiked()
+    func photoWasUnLiked()
 }
 
 protocol FavoritesViewOutput: AnyObject {
     func viewDidLoad()
     func navigateToPhotoInfo(viewModel: PhotoViewModel)
+    func addObeservers()
+    func removeObservers()
 }
 
 protocol FavoritesInteractorInput: AnyObject {

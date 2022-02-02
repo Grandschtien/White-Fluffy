@@ -23,6 +23,8 @@ protocol PhotoInfoViewInput: AnyObject {
 
 protocol PhotoInfoViewOutput: AnyObject {
     func viewDidLoad()
+    func likePhotoNotification(viewModel: PhotoInfoViewModel)
+    func unLikePhotoNotification(viewModel: PhotoInfoViewModel)
     func likePhoto(key: String)
     func unlikePhoto(key: String)
 }
@@ -31,10 +33,12 @@ protocol PhotoInfoInteractorInput: AnyObject {
     func loadStatisticsOfPhoto(for key: String)
     func setLikedPhoto(key: String)
     func setUnlikedPhoto(key: String)
+    func postLikePhotoNotification(viewModel: PhotoInfoViewModel)
+    func postUnLikePhotoNotification(viewModel: PhotoInfoViewModel)
 }
 
 protocol PhotoInfoInteractorOutput: AnyObject {
-    func recivePhotoStatistics(photo: Statistics)
+    func recivePhotoStatistics(photo: PhotoWithStatistics)
     func didCatchError(errorDescription: String)
 }
 
