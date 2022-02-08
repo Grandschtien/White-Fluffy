@@ -22,15 +22,16 @@ protocol PhotosViewInput: AnyObject {
     func updateSearchResults(viewModels: [PhotoViewModel])
 }
 
-protocol PhotosViewOutput: AnyObject {
-    func viewDidLoad()
+protocol PhotosViewOutput: AnyObject, ViewOutput {
     func search(query: String)
+    func loadNextPage(page: Int)
     func navigateToPhotoInfo(viewModel: PhotoViewModel)
 }
 
 protocol PhotosInteractorInput: AnyObject {
     func loadPhotos()
     func startSearch(query: String)
+    func loadNextPage(page: Int)
 }
 
 protocol PhotosInteractorOutput: AnyObject {

@@ -14,7 +14,7 @@ enum RequestErrors: Error {
 }
 
 protocol NetworkProtocol {
-    func getPhotoData(completion: @escaping (Result<Data, Error>) -> ())
+    func getPhotoData(page: Int, completion: @escaping (Result<Data, Error>) -> ())
     func searchPhotos(query: String,
                       completion: @escaping (Result<Data, Error>) -> ())
     func getPhotoStatisticsForKey(key: String,
@@ -28,8 +28,8 @@ protocol NetworkProtocol {
 
 final class NetworkService: NetworkProtocol {
     //MARK: - Функция получающая 20 случайных фото
-    func getPhotoData(completion: @escaping (Result<Data, Error>) -> ()) {
-        guard let url = URL.with(string: "photos/random?count=20") else {
+    func getPhotoData(page: Int, completion: @escaping (Result<Data, Error>) -> ()) {
+        guard let url = URL.with(string: "/photos?page=\(page)&per_page=20") else {
             completion(.failure(RequestErrors.invalidURL))
             return
         }
@@ -51,7 +51,7 @@ final class NetworkService: NetworkProtocol {
     }
     //MARK: - Функция для поиска фото
     func searchPhotos(query: String, completion: @escaping (Result<Data, Error>) -> ()) {
-        guard let url = URL.with(string: "search/photos?page=1&query=\(query)&lang=ru") else {
+        guard let url = URL.with(string: "search/photos?query=\(query)") else {
             return
         }
         var urlRequest = URLRequest(url: url)

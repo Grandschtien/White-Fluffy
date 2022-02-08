@@ -20,33 +20,10 @@ final class PhotoInfoViewController: UIViewController {
     }()
     
     //Для обработки потери сети
-    private let errorLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 20, weight: .regular)
-        label.textAlignment = .center
-        label.textColor = .black
-        label.numberOfLines = 2
-        return label
-    }()
-    private let errorButton: UIButton = {
-        let button = UIButton(type: .roundedRect)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Обновить", for: .normal)
-        button.setTitleColor(UIColor(named: Colors.buttonColor.rawValue), for: .normal)
-        button.layer.cornerRadius = 10
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor(named: Colors.buttonColor.rawValue)?.cgColor
-        return button
-    }()
-    private let errorStackView:UIStackView = {
-        let stack = UIStackView()
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.axis = .vertical
-        stack.spacing = 30
-        stack.distribution = .fill
-        stack.alignment = .center
-        return stack
+    private var errorView: ErrorView = {
+        var errorView = ErrorView(frame: .zero)
+        errorView.translatesAutoresizingMaskIntoConstraints = false
+        return errorView
     }()
     
     private let image: UIImageView = {
@@ -172,26 +149,11 @@ extension PhotoInfoViewController: PhotoInfoViewInput {
     func setupErrorView(with description: String) {
         DispatchQueue.main.async {[self] in
             activityIndicator.isHidden = true
-            view.addSubview(errorStackView)
-            errorStackView.addArrangedSubview(errorLabel)
-            errorStackView.addArrangedSubview(errorButton)
-            
-            errorStackView.centerY()
-            errorStackView.centerX()
-            errorStackView.trailing(-30)
-            errorStackView.leading(30)
-            errorLabel.trailing()
-            errorLabel.leading()
-            errorButton.trailing()
-            errorButton.leading()
-            
-            errorLabel.text = description
-            errorButton.addTarget(self,
-                                  action: #selector(reloadView),
-                                  for: .touchUpInside)
-            errorStackView.isHidden = false
-            errorLabel.isHidden = false
-            errorButton.isHidden = false
+            view.addSubview(errorView)
+            errorView.configureLayout()
+            errorView.addTargetToErrorButton(self, action: #selector(reloadView), for: .touchUpInside)
+            errorView.isHidden = false
+            errorView.descriptionOfError = description
         }
     }
     
@@ -242,9 +204,7 @@ extension PhotoInfoViewController {
         activityIndicator.startAnimating()
         activityIndicator.isHidden = false
         output.viewDidLoad()
-        errorStackView.isHidden = true
-        errorLabel.isHidden = true
-        errorButton.isHidden = true
+        errorView.isHidden = false
     }
 }
 

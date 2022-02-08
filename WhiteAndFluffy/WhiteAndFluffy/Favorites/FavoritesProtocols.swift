@@ -22,8 +22,7 @@ protocol FavoritesViewInput: AnyObject {
     func photoWasUnLiked()
 }
 
-protocol FavoritesViewOutput: AnyObject {
-    func viewDidLoad()
+protocol FavoritesViewOutput: AnyObject, ViewOutput {
     func navigateToPhotoInfo(viewModel: PhotoViewModel)
     func addObeservers()
     func removeObservers()

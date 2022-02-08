@@ -21,8 +21,8 @@ protocol PhotoInfoViewInput: AnyObject {
     func setupErrorView(with description: String)
 }
 
-protocol PhotoInfoViewOutput: AnyObject {
-    func viewDidLoad()
+protocol PhotoInfoViewOutput: AnyObject, ViewOutput {
+
     func likePhotoNotification(viewModel: PhotoInfoViewModel)
     func unLikePhotoNotification(viewModel: PhotoInfoViewModel)
     func likePhoto(key: String)

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import AVFoundation
 
 final class PhotosInteractor {
     weak var output: PhotosInteractorOutput?
@@ -15,6 +16,22 @@ final class PhotosInteractor {
 }
 //MARK: - PhotosInteractorInput
 extension PhotosInteractor: PhotosInteractorInput {
+    func loadNextPage(page: Int) {
+        networkService.getPhotoData(page: page) {[weak self] result in
+            switch result {
+            case .success(let data):
+                guard let photos = try? JSONDecoder().decode([Photo].self,
+                                                             from: data)
+                else {
+                    return
+                }
+                self?.output?.didLoadPhotos(photots: photos)
+            case .failure(let error):
+                self?.output?.didCatchError(errorDescription: error.localizedDescription)
+            }
+        }
+    }
+    
     /// Функция загрузки результатов поиска
     func startSearch(query: String) {
         networkService.searchPhotos(query: query) { [weak self] result in
@@ -34,7 +51,7 @@ extension PhotosInteractor: PhotosInteractorInput {
     }
     /// Функция закгрузки фотографий
     func loadPhotos() {
-        networkService.getPhotoData {[weak self] result in
+        networkService.getPhotoData(page: 1) {[weak self] result in
             switch result {
             case .success(let data):
                 guard let photos = try? JSONDecoder().decode([Photo].self,

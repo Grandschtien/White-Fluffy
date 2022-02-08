@@ -26,6 +26,10 @@ extension PhotosPresenter: PhotosModuleInput {
 }
 //MARK: - PhotosViewOutput
 extension PhotosPresenter: PhotosViewOutput {
+    func loadNextPage(page: Int) {
+        interactor.loadNextPage(page: page)
+    }
+    
     func navigateToPhotoInfo(viewModel: PhotoViewModel) {
         router.gotToPhotoInfo(viewModel: viewModel)
     }

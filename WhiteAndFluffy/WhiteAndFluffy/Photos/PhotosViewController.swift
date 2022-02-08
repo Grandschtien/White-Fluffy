@@ -7,19 +7,26 @@
 //
 
 import UIKit
+import SkeletonView
 
 final class PhotosViewController: UIViewController {
     private let output: PhotosViewOutput
     private var viewModels = [PhotoViewModel]()
     private var searchResultsViewModels: [PhotoViewModel] = []
-    
+    private let batchSize = 20
+    private let collectionViewInsets =  UIEdgeInsets(top: 0,
+                                                     left: 10,
+                                                     bottom: 10,
+                                                     right: 10)
     private var isFiltering: Bool {
         return !isSearchBarEmpty
     }
     private var isSearchBarEmpty: Bool {
-            return searchBar.text?.isEmpty ?? true
-        }
+        return searchBar.text?.isEmpty ?? true
+    }
     private var searchBar = UISearchBar()
+    private var numberOfPage = 1
+    
     private var activityIndicator: UIActivityIndicatorView = {
         let activity = UIActivityIndicatorView()
         activity.translatesAutoresizingMaskIntoConstraints = false
@@ -28,35 +35,12 @@ final class PhotosViewController: UIViewController {
     }()
     
     //Для обработки потери сети
-    private let errorLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.systemFont(ofSize: 20, weight: .regular)
-        label.textAlignment = .center
-        label.textColor = .black
-        label.numberOfLines = 2
-        return label
+    private var errorView: ErrorView = {
+        var errorView = ErrorView(frame: .zero)
+        errorView.translatesAutoresizingMaskIntoConstraints = false
+        return errorView
     }()
     
-    private let errorButton: UIButton = {
-        let button = UIButton(type: .roundedRect)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Обновить", for: .normal)
-        button.setTitleColor(UIColor(named: Colors.buttonColor.rawValue), for: .normal)
-        button.layer.cornerRadius = 10
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor(named: Colors.buttonColor.rawValue)?.cgColor
-        return button
-    }()
-    private let errorStackView:UIStackView = {
-        let stack = UIStackView()
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.axis = .vertical
-        stack.spacing = 30
-        stack.distribution = .fill
-        stack.alignment = .center
-        return stack
-    }()
     private let collection: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         var collection = UICollectionView(frame: .zero,
@@ -81,7 +65,6 @@ final class PhotosViewController: UIViewController {
         super.viewDidLoad()
         setup()
         output.viewDidLoad()
-        setupWaitingIndicator()
     }
 }
 //MARK: - PhotosViewInput
@@ -94,17 +77,16 @@ extension PhotosViewController: PhotosViewInput {
                 self.searchResultsViewModels = []
                 return
             }
-            self.collection.isHidden = false
-            self.activityIndicator.isHidden = true
             self.collection.reloadData()
         }
     }
     // MARK: - updateViewWithPhoto
     func updateViewWithPhoto(viewModels: [PhotoViewModel]) {
         DispatchQueue.main.async {
-            self.collection.isHidden = false
-            self.activityIndicator.isHidden = true
-            self.viewModels = viewModels
+            self.viewModels.append(contentsOf: viewModels)
+            self.collection.stopSkeletonAnimation()
+            self.view.hideSkeleton(reloadDataAfter: true,
+                                   transition: .none)
             self.collection.reloadData()
         }
     }
@@ -112,28 +94,15 @@ extension PhotosViewController: PhotosViewInput {
     //MARK: - setupErrorView
     func setupErrorView(with description: String) {
         DispatchQueue.main.async {[self] in
-            collection.isHidden = true
-            activityIndicator.isHidden = true
-            view.addSubview(errorStackView)
-            errorStackView.addArrangedSubview(errorLabel)
-            errorStackView.addArrangedSubview(errorButton)
-            
-            errorStackView.centerY()
-            errorStackView.centerX()
-            errorStackView.trailing(-30)
-            errorStackView.leading(30)
-            errorLabel.trailing()
-            errorLabel.leading()
-            errorButton.trailing()
-            errorButton.leading()
-            
-            errorLabel.text = description
-            errorButton.addTarget(self,
-                                  action: #selector(reloadView),
-                                  for: .touchUpInside)
-            errorStackView.isHidden = false
-            errorLabel.isHidden = false
-            errorButton.isHidden = false
+            if viewModels.isEmpty {
+                view.addSubview(errorView)
+                errorView.configureLayout()
+                errorView.addTargetToErrorButton(self, action: #selector(reloadView), for: .touchUpInside)
+                errorView.isHidden = false
+                errorView.descriptionOfError = description
+            } else {
+                self.createAlertView(with: description)
+            }
         }
     }
     
@@ -141,7 +110,6 @@ extension PhotosViewController: PhotosViewInput {
 // MARK: - Настройка таблицы
 extension PhotosViewController {
     private func setup() {
-        collection.isHidden = true
         navigationController?.isNavigationBarHidden = false
         navigationItem.titleView = searchBar
         view.backgroundColor = .white
@@ -150,13 +118,30 @@ extension PhotosViewController {
         collection.dataSource = self
         collection.delegate = self
         collection.register(PhotoCell.self)
-        collection.contentInset = UIEdgeInsets(top: 0,
-                                               left: 10,
-                                               bottom: 10,
-                                               right: 10)
+        collection.contentInset = collectionViewInsets
         view.addSubview(collection)
         collection.pins()
-        searchBar.searchTextField.addTarget(self, action: #selector(removeRuCharacters(_:)), for: .editingChanged)
+        collection.isSkeletonable = true
+        collection.showAnimatedSkeleton()
+        searchBar.searchTextField.keyboardType = .asciiCapable
+    }
+    
+    private func createAlertView(with error: String) {
+        let alertController = UIAlertController(title: "Error",
+                                                message: error,
+                                                preferredStyle: .alert)
+        let action = UIAlertAction(title: "Refresh", style: .default) { action in
+            DispatchQueue.main.async {
+                self.reloadView()
+            }
+        }
+        let oKaction = UIAlertAction(title: "Ok", style: .cancel)
+        alertController.addAction(oKaction)
+        alertController.addAction(action)
+        present(alertController,
+                animated: true,
+                completion: nil)
+        
     }
     
     //MARK: - setupWaitingIndicator
@@ -165,10 +150,15 @@ extension PhotosViewController {
         activityIndicator.setup()
     }
 }
-//MARK: - UITableViewDataSource
-extension PhotosViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView,
-                        numberOfItemsInSection section: Int) -> Int {
+//MARK: - UICollectionViewDataSource
+extension PhotosViewController: SkeletonCollectionViewDataSource {
+    func collectionSkeletonView(_ skeletonView: UICollectionView,
+                                cellIdentifierForItemAt indexPath: IndexPath) ->
+    ReusableCellIdentifier {
+        return PhotoCell.reuseIdentifier
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if isFiltering {
             return searchResultsViewModels.count
         } else {
@@ -176,29 +166,38 @@ extension PhotosViewController: UICollectionViewDataSource {
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView,
-                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collection.dequeueCell(cellType: PhotoCell.self,
-                                          for: indexPath)
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        print("\(indexPath)")
+        let cell = collectionView.dequeueCell(cellType: PhotoCell.self,
+                                              for: indexPath)
         if isFiltering {
+            if !searchResultsViewModels.isEmpty {
+                cell.hideSkeleton()
+            }
             cell.configure(with: searchResultsViewModels[indexPath.item])
+            return cell
         } else {
+            if !viewModels.isEmpty {
+                cell.hideSkeleton()
+            }
+            if indexPath.row == (viewModels.count - 1) {
+                let currentPage = viewModels.count / batchSize == 1 ? 2 : viewModels.count / batchSize
+                output.loadNextPage(page: currentPage)
+            }
             cell.configure(with: viewModels[indexPath.item])
+            return cell
         }
-        return cell
     }
 }
 //MARK: - UITableViewDelegate
 extension PhotosViewController: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView,
-                        didSelectItemAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if isFiltering {
             output.navigateToPhotoInfo(viewModel: searchResultsViewModels[indexPath.item])
         } else {
             output.navigateToPhotoInfo(viewModel: viewModels[indexPath.item])
         }
     }
-   
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         searchBar.endEditing(true)
     }
@@ -208,7 +207,8 @@ extension PhotosViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width / 2 - 20, height: view.frame.width / 2 - 20)
+            return CGSize(width: view.frame.width / 2 - 20,
+                          height: view.frame.width / 2 - 20)
     }
 }
 
@@ -225,23 +225,7 @@ extension PhotosViewController: UISearchBarDelegate {
 extension PhotosViewController {
     @objc
     func reloadView() {
-        activityIndicator.startAnimating()
-        activityIndicator.isHidden = false
         output.viewDidLoad()
-        errorStackView.isHidden = true
-        errorLabel.isHidden = true
-        errorButton.isHidden = true
-    }
-    
-    @objc
-    func removeRuCharacters(_ sender: UISearchTextField) {
-        guard let text = sender.text else { return }
-        let ruCharacters = ruCharacters
-        sender.text = text.filter({ char in
-            if ruCharacters.contains(char) {
-                return false
-            }
-            return true
-        })
+        errorView.isHidden = true
     }
 }
